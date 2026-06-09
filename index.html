@@ -1,0 +1,304 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análisis Estratégico de Ventas</title>
+
+<style>
+:root{
+    --primary:#2563eb;
+    --secondary:#1e293b;
+    --success:#16a34a;
+    --warning:#f59e0b;
+    --danger:#dc2626;
+    --bg:#f8fafc;
+    --card:#ffffff;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI, sans-serif;
+}
+
+body{
+    background:var(--bg);
+    color:#334155;
+    line-height:1.6;
+}
+
+header{
+    background:linear-gradient(135deg,#2563eb,#1e40af);
+    color:white;
+    padding:60px 20px;
+    text-align:center;
+}
+
+header h1{
+    font-size:2.5rem;
+    margin-bottom:10px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:30px 20px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-bottom:40px;
+}
+
+.card{
+    background:var(--card);
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.metric{
+    font-size:2rem;
+    font-weight:bold;
+    color:var(--primary);
+}
+
+section{
+    margin-bottom:40px;
+}
+
+h2{
+    color:var(--secondary);
+    margin-bottom:20px;
+}
+
+.recommendation{
+    border-left:5px solid var(--primary);
+    background:white;
+    padding:20px;
+    margin-bottom:15px;
+    border-radius:8px;
+}
+
+.good{
+    border-left-color:var(--success);
+}
+
+.warning{
+    border-left-color:var(--warning);
+}
+
+.danger{
+    border-left-color:var(--danger);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+th{
+    background:#1e293b;
+    color:white;
+}
+
+th,td{
+    padding:12px;
+    border-bottom:1px solid #e2e8f0;
+    text-align:left;
+}
+
+footer{
+    text-align:center;
+    padding:30px;
+    color:#64748b;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Análisis Estratégico de Ventas</h1>
+    <p>Reporte Ejecutivo generado a partir de datos operativos y logísticos</p>
+</header>
+
+<div class="container">
+
+    <div class="grid">
+
+        <div class="card">
+            <h3>Ventas Analizadas</h3>
+            <div class="metric">112.649</div>
+        </div>
+
+        <div class="card">
+            <h3>Facturación Total</h3>
+            <div class="metric">$13,59 M</div>
+        </div>
+
+        <div class="card">
+            <h3>Merma por Flete</h3>
+            <div class="metric">$9.302</div>
+        </div>
+
+        <div class="card">
+            <h3>Método Dominante</h3>
+            <div class="metric">Credit Card</div>
+        </div>
+
+    </div>
+
+    <section>
+        <h2>Resumen Ejecutivo</h2>
+
+        <div class="recommendation">
+            <strong>Objetivo del análisis:</strong>
+            Identificar pérdidas operativas, oportunidades comerciales y mejoras
+            logísticas a partir de las ventas, cancelaciones y tiempos de entrega.
+        </div>
+    </section>
+
+    <section>
+        <h2>Análisis por Categoría</h2>
+
+        <div class="recommendation good">
+            <h3>pc_gamer</h3>
+            <p>
+                Presenta la mayor tasa de merma porcentual (11,11%), aunque sobre
+                un volumen muy reducido. La recomendación es ampliar la penetración
+                del segmento y aumentar el volumen de ventas para diluir el impacto
+                de cancelaciones aisladas.
+            </p>
+        </div>
+
+        <div class="recommendation danger">
+            <h3>dvds_blu_ray</h3>
+            <p>
+                Categoría con señales claras de obsolescencia tecnológica y baja
+                proyección comercial. Se recomienda liquidar el stock remanente y
+                reasignar capital a categorías con mayor crecimiento.
+            </p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Categoría</th>
+                    <th>Tasa de Merma</th>
+                    <th>Acción Recomendada</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>pc_gamer</td>
+                    <td>11,11%</td>
+                    <td>Expandir mercado</td>
+                </tr>
+                <tr>
+                    <td>dvds_blu_ray</td>
+                    <td>4,69%</td>
+                    <td>Descontinuar</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Análisis Logístico y Geográfico</h2>
+
+        <div class="recommendation warning">
+            <p>
+                Los rechazos de pedidos aparecen de forma aislada y no muestran
+                correlación directa con la demora puntual de entrega.
+            </p>
+        </div>
+
+        <div class="recommendation">
+            <p>
+                Sin embargo, existen cuellos de botella estructurales en rutas
+                de larga distancia, especialmente hacia regiones alejadas de los
+                principales centros de despacho.
+            </p>
+        </div>
+
+        <div class="recommendation good">
+            <h3>Recomendación</h3>
+            <p>
+                Implementar una red de distribuidores regionales o centros
+                logísticos descentralizados para reducir lead time, costos
+                operativos y mejorar la experiencia del cliente.
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Análisis por Método de Pago</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Método</th>
+                    <th>Ventas ($)</th>
+                    <th>Merma Flete ($)</th>
+                    <th>Tasa Merma</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Credit Card</td>
+                    <td>$9.745.020</td>
+                    <td>$7.006,89</td>
+                    <td>0,062%</td>
+                </tr>
+                <tr>
+                    <td>Boleto</td>
+                    <td>$2.112.765</td>
+                    <td>$1.590,91</td>
+                    <td>0,064%</td>
+                </tr>
+                <tr>
+                    <td>Voucher</td>
+                    <td>$390.819</td>
+                    <td>$537,14</td>
+                    <td>0,116%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="recommendation warning">
+            <h3>Hallazgo Principal</h3>
+            <p>
+                Las tarjetas de crédito concentran el mayor impacto económico
+                absoluto debido a cancelaciones posteriores al despacho.
+            </p>
+        </div>
+
+        <div class="recommendation good">
+            <h3>Acción Recomendada</h3>
+            <p>
+                Evaluar una política de recuperación o retención de costos
+                logísticos ante cancelaciones imputables al cliente o a la
+                pasarela de pago luego del envío.
+            </p>
+        </div>
+
+    </section>
+
+</div>
+
+<footer>
+    <p>Reporte generado a partir del archivo "Análisis de las Ventas"</p>
+</footer>
+
+</body>
+</html>
+```
