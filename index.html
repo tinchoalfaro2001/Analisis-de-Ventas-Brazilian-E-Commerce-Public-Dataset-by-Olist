@@ -575,117 +575,122 @@
         <!-- VISTA DE DETALLE: PROYECTO OLIST           -->
         <!-- ========================================== -->
         <div id="proyecto-olist" class="project-view">
-            <button class="btn btn-secondary" onclick="closeProject()">
-                <i class="fas fa-arrow-left"></i> Volver al Inicio
-            </button>
-            
-            <div class="project-header-meta">
-                <h2>Brazilian E-Commerce: Optimización de Mermas y Logística Inversa</h2>
-                <span class="job-meta">Herramientas: SQL (SQLite) | Excel Avanzado | Power Query</span>
-            </div>
-
-            <div class="project-body">
-                <h5>🏬 Sobre la Empresa</h5>
-                <p>Olist es una plataforma tecnológica de retail líder en Brasil que funciona como un integrador de marketplaces. Permite que miles de pequeñas y medianas empresas locales publiquen sus productos en los sitios de comercio electrónico más grandes del país, unificando la facturación, los canales de atención y la gestión de envíos bajo una misma infraestructura operativa.</p>
-
-                <h5>⚠️ Problemática</h5>
-                <p>El análisis tradicional de ventas solía enfocarse únicamente en el volumen bruto de facturación. Sin embargo, el verdadero margen de ganancia se estaba erosionando debido a las mermas operativas: costos hundidos de logística inversa (flete) en pedidos cancelados o rechazados post-despacho, donde la empresa ya había absorbido el valor de la distribución de última milla. El objetivo fue identificar los puntos críticos de fuga y proponer soluciones estructurales.</p>
-
-                <h5>🛠️ Herramientas Utilizadas</h5>
-                <ul>
-                    <li><strong>SQL (sqliteviz):</strong> Modelado de datos desde la base original, utilizando Window Functions (ROW_NUMBER()) y expresiones de agrupamiento para solucionar problemas de duplicaciones por producto en pedidos multi-ítem.</li>
-                    <li><strong>Power Query:</strong> Extracción, transformación y carga (ETL) automatizada para importar y unificar la base de datos optimizada dentro de Excel.</li>
-                    <li><strong>Excel Avanzado:</strong> Procesamiento dinámico, lógicas condicionales robustas (SI.ERROR), consolidación de dimensiones con BUSCARV y diseño de mapas de calor para auditoría visual.</li>
-                </ul>
-
-                <div class="project-img-box">
-                    <img src="img/olist_analisis1.png" alt="Análisis de mermas y logística en Olist">
-                    <span class="img-caption">Estructuración de datos de fletes y mapas de calor logísticos realizados en Excel.</span>
+                    <button class="btn btn-secondary" onclick="closeProject()">
+                        <i class="fas fa-arrow-left"></i> Volver al Inicio
+                    </button>
+                    
+                    <div class="project-header-meta">
+                        <h2>Brazilian E-Commerce: Optimización de Mermas y Logística Inversa</h2>
+                        <span class="job-meta">Herramientas: SQL (SQLite) | Excel Avanzado | Power Query</span>
+                    </div>
+        
+                    <div class="project-body">
+                        <h5>🏬 Sobre la Empresa</h5>
+                        <p>Olist es una plataforma tecnológica de retail líder en Brasil que funciona como un integrador de marketplaces. Permite que miles de pequeñas y medianas empresas locales publiquen sus productos en los sitios de comercio electrónico más grandes del país, unificando la facturación, los canales de atención y la gestión de envíos bajo una misma infraestructura operativa.</p>
+        
+                        <h5>⚠️ Problemática</h5>
+                        <p>El análisis tradicional de ventas solía enfocarse únicamente en el volumen bruto de facturación. Sin embargo, el verdadero margen de ganancia se estaba erosionando debido a las mermas operativas: costos hundidos de logística inversa (flete) en pedidos cancelados o rechazados post-despacho, donde la empresa ya había absorbido el valor de la distribución de última milla. El objetivo fue identificar los puntos críticos de fuga y proponer soluciones estructurales.</p>
+        
+                        <h5>🛠️ Herramientas Utilizadas</h5>
+                        <ul>
+                            <li><strong>SQL (sqliteviz):</strong> Modelado de datos desde la base original, utilizando Window Functions (ROW_NUMBER()) y expresiones de agrupamiento para solucionar problemas de duplicaciones por producto en pedidos multi-ítem.</li>
+                            <li><strong>Power Query:</strong> Extracción, transformación y carga (ETL) automatizada para importar y unificar la base de datos optimizada dentro de Excel.</li>
+                            <li><strong>Excel Avanzado:</strong> Procesamiento dinámico, lógicas condicionales robustas (SI.ERROR), consolidación de dimensiones con BUSCARV y diseño de mapas de calor para auditoría visual.</li>
+                        </ul>
+        
+                        <h5>📁 Proceso SQL: Interfaz y Consulta para la Extracción de los Datos</h5>
+                        
+                        <div class="project-img-box">
+                            <img src="img/olist_interfaz_sql.png" alt="Interfaz de consulta SQL en sqliteviz">
+                            <span class="img-caption">Entorno de desarrollo y modelado relacional en sqliteviz.</span>
+                        </div>
+        
+                        <pre><code>WITH items_numerados AS (
+            SELECT 
+                oi.order_id,
+                oi.product_id,
+                oi.seller_id,
+                oi.price,
+                oi.freight_value,
+                ROW_NUMBER() OVER (PARTITION BY oi.order_id ORDER BY oi.product_id) AS numero_linea
+            FROM olist_order_items_dataset oi
+        ),
+        pagos_consolidados AS (
+            SELECT 
+                order_id,
+                MAX(payment_type) AS tipo_pago_principal, 
+                SUM(CAST(payment_value AS REAL)) AS monto_total_pago_pedido
+            FROM olist_order_payments_dataset
+            GROUP BY order_id
+        )
+        SELECT 
+            o.order_id,
+            o.order_status,
+            strftime('%Y-%m-%d', o.order_purchase_timestamp) AS fecha_compra,
+            strftime('%Y-%m-%d', o.order_delivered_carrier_date) AS fecha_entrega_correo,
+            strftime('%Y-%m-%d', o.order_delivered_customer_date) AS fecha_entrega_cliente,
+            strftime('%Y-%m-%d', o.order_estimated_delivery_date) AS fecha_estimada_entrega,
+            ROUND(julianday(o.order_delivered_customer_date) - julianday(o.order_estimated_delivery_date), 1) AS dias_desvio_promesa,
+            c.customer_id,
+            c.customer_city AS ciudad_cliente,
+            c.customer_state AS estado_cliente,
+            s.seller_id,
+            s.seller_city AS ciudad_vendedor,
+            s.seller_state AS estado_vendedor,
+            COALESCE(t.product_category_name_english, p.product_category_name) AS categoria_producto,
+            CAST(i.price AS REAL) AS venta_producto,
+            CASE 
+                WHEN i.numero_linea = 1 THEN CAST(i.freight_value AS REAL)
+                ELSE 0.0 
+            END AS costo_flete_cliente,
+            CAST(i.price AS REAL) + (CASE WHEN i.numero_linea = 1 THEN CAST(i.freight_value AS REAL) ELSE 0.0 END) AS total_facturado_fila,
+            CASE 
+                WHEN i.numero_linea = 1 THEN pay.tipo_pago_principal
+                ELSE 'Multi-item'
+            END AS tipo_pago,
+            CASE 
+                WHEN i.numero_linea = 1 THEN CAST(pay.monto_total_pago_pedido AS REAL)
+                ELSE 0.0 
+            END AS monto_total_pago,
+            CASE 
+                WHEN o.order_status IN ('canceled', 'unavailable') THEN CAST(i.price AS REAL)
+                ELSE 0.0 
+            END AS merma_venta_perdida,
+            CASE 
+                WHEN o.order_status = 'canceled' AND i.numero_linea = 1 THEN CAST(i.freight_value AS REAL)
+                ELSE 0.0 
+            END AS merma_flete_absorbido
+        FROM olist_orders_dataset o
+        INNER JOIN items_numerados i ON o.order_id = i.order_id
+        INNER JOIN olist_customers_dataset c ON o.customer_id = c.customer_id
+        LEFT JOIN pagos_consolidados pay ON o.order_id = pay.order_id
+        LEFT JOIN olist_products_dataset p ON i.product_id = p.product_id
+        LEFT JOIN product_category_name_translation t ON p.product_category_name = t.product_category_name
+        LEFT JOIN olist_sellers_dataset s ON i.seller_id = s.seller_id;</code></pre>
+        
+                        <div class="project-img-box">
+                            <img src="img/olist_resultado_sql.png" alt="Resultado de Consulta SQL">
+                            <span class="img-caption">Resultado limpio de la consulta optimizada procesada en SQLite.</span>
+                        </div>
+        
+                        <h5>📊 Consolidación y Procesamiento en Excel</h5>
+                        <div class="project-img-box">
+                            <img src="img/olist_analisis_excel.png" alt="Análisis de mermas y mapas de calor en Excel">
+                            <span class="img-caption">Estructuración de datos de fletes y auditoría visual mediante mapas de calor realizados en Excel.</span>
+                        </div>
+        
+                        <h5>💡 Resultados Clave del Análisis</h5>
+                        <p><strong>Análisis por Categoría:</strong><br>
+                        • <em>Optimización de pc_gamer:</em> Aunque presenta una Tasa de Merma del 11.11%, responde a una baja penetración analizada (un único ticket cancelado). Al ser un sector de nicho de ticket promedio alto, se propone traccionar volumen para diluir el peso de cancelaciones.<br>
+                        • <em>Descontinuación de dvds_blu_ray:</em> Muestra claras señales de obsolescencia con pérdidas recurrentes por flete (0.61%). Se recomendó liquidar stock remanente y reasignar capital a categorías eficientes.</p>
+        
+                        <p><strong>Análisis Geográfico y Logístico:</strong><br>
+                        • Se detectaron cuellos de botella estructurales críticos hacia el Norte y Nordeste brasileño. Para mitigar retrasos crónicos, se propuso descentralizar la red derivando órdenes hacia centros de despacho regionales más cercanos al consumidor final, reduciendo radicalmente el Lead Time.</p>
+        
+                        <p><strong>Análisis por Métodos de Pago:</strong><br>
+                        • El método <em>credit_card</em> concentró el mayor impacto monetario absoluto ($7,006.89 en fletes absorbidos sobre 334 rechazos). Se propuso implementar una política de cobro mínimo por cancelación imputable al cliente para cubrir el gasto logístico de ida y vuelta.</p>
+                    </div>
                 </div>
-
-                <h5>📁 Proceso SQL: Consulta para la Extracción de los Datos</h5>
-                <pre><code>WITH items_numerados AS (
-    SELECT 
-        oi.order_id,
-        oi.product_id,
-        oi.seller_id,
-        oi.price,
-        oi.freight_value,
-        ROW_NUMBER() OVER (PARTITION BY oi.order_id ORDER BY oi.product_id) AS numero_linea
-    FROM olist_order_items_dataset oi
-),
-pagos_consolidados AS (
-    SELECT 
-        order_id,
-        MAX(payment_type) AS tipo_pago_principal, 
-        SUM(CAST(payment_value AS REAL)) AS monto_total_pago_pedido
-    FROM olist_order_payments_dataset
-    GROUP BY order_id
-)
-SELECT 
-    o.order_id,
-    o.order_status,
-    strftime('%Y-%m-%d', o.order_purchase_timestamp) AS fecha_compra,
-    strftime('%Y-%m-%d', o.order_delivered_carrier_date) AS fecha_entrega_correo,
-    strftime('%Y-%m-%d', o.order_delivered_customer_date) AS fecha_entrega_cliente,
-    strftime('%Y-%m-%d', o.order_estimated_delivery_date) AS fecha_estimada_entrega,
-    ROUND(julianday(o.order_delivered_customer_date) - julianday(o.order_estimated_delivery_date), 1) AS dias_desvio_promesa,
-    c.customer_id,
-    c.customer_city AS ciudad_cliente,
-    c.customer_state AS estado_cliente,
-    s.seller_id,
-    s.seller_city AS ciudad_vendedor,
-    s.seller_state AS estado_vendedor,
-    COALESCE(t.product_category_name_english, p.product_category_name) AS categoria_producto,
-    CAST(i.price AS REAL) AS venta_producto,
-    CASE 
-        WHEN i.numero_linea = 1 THEN CAST(i.freight_value AS REAL)
-        ELSE 0.0 
-    END AS costo_flete_cliente,
-    CAST(i.price AS REAL) + (CASE WHEN i.numero_linea = 1 THEN CAST(i.freight_value AS REAL) ELSE 0.0 END) AS total_facturado_fila,
-    CASE 
-        WHEN i.numero_linea = 1 THEN pay.tipo_pago_principal
-        ELSE 'Multi-item'
-    END AS tipo_pago,
-    CASE 
-        WHEN i.numero_linea = 1 THEN CAST(pay.monto_total_pago_pedido AS REAL)
-        ELSE 0.0 
-    END AS monto_total_pago,
-    CASE 
-        WHEN o.order_status IN ('canceled', 'unavailable') THEN CAST(i.price AS REAL)
-        ELSE 0.0 
-    END AS merma_venta_perdida,
-    CASE 
-        WHEN o.order_status = 'canceled' AND i.numero_linea = 1 THEN CAST(i.freight_value AS REAL)
-        ELSE 0.0 
-    END AS merma_flete_absorbido
-FROM olist_orders_dataset o
-INNER JOIN items_numerados i ON o.order_id = i.order_id
-INNER JOIN olist_customers_dataset c ON o.customer_id = c.customer_id
-LEFT JOIN pagos_consolidados pay ON o.order_id = pay.order_id
-LEFT JOIN olist_products_dataset p ON i.product_id = p.product_id
-LEFT JOIN product_category_name_translation t ON p.product_category_name = t.product_category_name
-LEFT JOIN olist_sellers_dataset s ON i.seller_id = s.seller_id;</code></pre>
-
-                <div class="project-img-box">
-                    <img src="img/olist_resultado_sql.png" alt="Resultado de Consulta SQL">
-                    <span class="img-caption">Resultado limpio de la consulta optimizada procesada en SQLite.</span>
-                </div>
-
-                <h5>💡 Resultados Clave del Análisis</h5>
-                <p><strong>Análisis por Categoría:</strong><br>
-                • <em>Optimización de pc_gamer:</em> Aunque presenta una Tasa de Merma del 11.11%, responde a una baja penetración analizada (un único ticket cancelado). Al ser un sector de nicho de ticket promedio alto, se propone traccionar volumen para diluir el peso de cancelaciones.<br>
-                • <em>Descontinuación de dvds_blu_ray:</em> Muestra claras señales de obsolescencia con pérdidas recurrentes por flete (0.61%). Se recomendó liquidar stock remanente y reasignar capital a categorías eficientes.</p>
-
-                <p><strong>Análisis Geográfico y Logístico:</strong><br>
-                • Se detectaron cuellos de botella estructurales críticos hacia el Norte y Nordeste brasileño. Para mitigar retrasos crónicos, se propuso descentralizar la red derivando órdenes hacia centros de despacho regionales más cercanos al consumidor final, reduciendo radicalmente el Lead Time.</p>
-
-                <p><strong>Análisis por Métodos de Pago:</strong><br>
-                • El método <em>credit_card</em> concentró el mayor impacto monetario absoluto ($7,006.89 en fletes absorbidos sobre 334 rechazos). Se propuso implementar una política de cobro mínimo por cancelación imputable al cliente para cubrir el gasto logístico de ida y vuelta.</p>
-            </div>
-        </div>
-
-    </div>
 
     <!-- ========================================== -->
     <!-- LÓGICA JAVASCRIPT: CONTROL DE NAVEGACIÓN  -->
